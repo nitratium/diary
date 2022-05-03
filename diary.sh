@@ -53,6 +53,22 @@ while(true) { # not sure if this one is working or not
     fi
 }
 
+function password() {
+    return dialog --passwordbox "Password" 10 20   # --passwordbox <text> <height> <width> [<init>]
+}
+
 function encryption(password) {
 
+}
+
+function calendar() {
+
+}
+
+function infobox(Date) {
+    return dialog  --infobox "$Date" 15 30   # --infobox <text> <height> <width>
+}
+
+function inputbox(Date, init) {
+    return dialog  --inputbox "$Date" 15 30 "$init"   # --inputbox <text> <height> <width> [<init>]
 }
