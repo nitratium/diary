@@ -21,14 +21,6 @@ function passwordbox() {   # --passwordbox <text> <height> <width> [<init>]
     )
 }
 
-function file_to_zip() {  # for locking the diary https://www.tecmint.com/create-password-protected-zip-file-in-linux/
-    zip -p $PASSWORD $FILE_PATH.zip $FILE_PATH
-}
-
-function zip_to_file() {  # for unlocking the diary https://www.shellhacks.com/create-password-protected-zip-file-linux/
-    unzip -p $PASSWORD $FILE_PATH.zip
-}
-
 function calendar() {
     DATE=$(dialog --calendar "Calendar" 5 50 $(date +%d) $(date +%m) $(date +%Y)\
         3>&1 1>&2 2>&3 3>&- \
@@ -47,7 +39,16 @@ function inputbox() {   # --inputbox <text> <height> <width> [<init>]
     )
 }
 
-while true 
+function file_to_zip() {  # for locking the diary https://www.tecmint.com/create-password-protected-zip-file-in-linux/
+    zip -p $PASSWORD $FILE_PATH.zip $FILE_PATH
+}
+
+function zip_to_file() {  # for unlocking the diary https://www.shellhacks.com/create-password-protected-zip-file-linux/
+    unzip -p $PASSWORD $FILE_PATH.zip
+}
+
+
+while true
 do
     menu
 
@@ -57,7 +58,7 @@ do
         inputbox
         passwordbox
 
-        FILE_PATH=$HOME/diary/texts/$(date +%D)_$USER.dairy # not sure about this pattern, date returns dd/mm/yy. it will collide with path's pattern
+        FILE_PATH=$HOME/diary/texts/$(date +%d)-$(date +%m)-$(date +%Y)-$USER.dairy 
 
         echo DIARY_INPUT >> $FILE_PATH # here needs to be encrypted
         
@@ -73,15 +74,15 @@ do
         calendar
         passwordbox
 
-        FILE_PATH=$HOME/diary/texts/$DATE_$USER.diary # not sure about this pattern, date returns dd/mm/yy. it will collide with path's pattern
+        FILE_PATH=$HOME/diary/texts/$DATE-$USER.diary # not sure about this pattern, date returns dd/mm/yy. it will collide with path's pattern
 
         sub_menu # MISSING CODE HERE
 
         if (( $CHOICE == 1 ))
         then # NEEDS ENCRYPTION
-            echo password > $HOME/diary/texts/$year_$month_$day_$USER.diary
+            echo password > $HOME/diary/texts/$year-$month-$day-$USER.diary
             read new_text
-            echo new_text >> $HOME/diary/texts/$year_$month_$day_$USER.diary
+            echo new_text >> $HOME/diary/texts/$year-$month-$day-$USER.diary
         else
             continue
         fi
