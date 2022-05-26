@@ -9,12 +9,6 @@ function menu() {
     )
 }
 
-function sub_menu() {
-    CHOICE=$(dialog --menu "Welcome $USER" 12 45 25 1 "Edit this diary." 2 "Back."\
-        3>&1 1>&2 2>&3 3>&- \ 
-    )
-}
-
 function passwordbox() {   # --passwordbox <text> <height> <width> [<init>]
     PASSWORD=$(dialog --passwordbox "Password" 10 20\
         3>&1 1>&2 2>&3 3>&- \
