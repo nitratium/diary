@@ -4,7 +4,7 @@
 
 function menu() {
     CHOICE=$(dialog --menu "Welcome $USER" 12 45 25 1 "Enter dairy for $(date +%D)." 2 "View an old diary." 3 "Exit."\
-        3>&1 1>&2 2>&3 3>&- \ 
+        3>&1 1>&2 2>&3 3>&- \
         # if you are curious about what is happening on the line above, check here: https://stackoverflow.com/questions/29222633/bash-dialog-input-in-a-variable
     )
     clear
@@ -17,19 +17,23 @@ function passwordbox() {   # --passwordbox <text> <height> <width> [<init>]
     clear
 }
 
+# returns the date as dd/mm/yyyy, which will collide with the path. we need to handle this
 function calendar() {
-    DATE=$(dialog --calendar "Calendar" 5 50 $(date +%d) $(date +%m) $(date +%Y)\  # returns the date as dd/mm/yyyy, which will collide with the path. we need to handle this
+    DATE=$(dialog --calendar "Calendar" 5 50 "$(date +%d) $(date +%m) $(date +%Y)"\
         3>&1 1>&2 2>&3 3>&- \
     )
     clear
 }
 
+# --infobox <text> <height> <width>
 function infobox() {
-    dialog  --infobox "$TEXT" 15 30   # --infobox <text> <height> <width>
-    clear # not sure if we need to use clear here. probably yes
+    dialog  --infobox "$TEXT" 15 30
+    clear
+    # not sure if we need to use clear here. probably yes
 }
 
-function inputbox() {   # --inputbox <text> <height> <width> [<init>]
+# --inputbox <text> <height> <width> [<init>]
+function inputbox() {
     DIARY_INPUT=$(\
         dialog \
         --inputbox "Diary for $DATE_INPUT" 30 50 "$DIARY_INPUT" \
@@ -38,59 +42,64 @@ function inputbox() {   # --inputbox <text> <height> <width> [<init>]
     clear
 }
 
-function file_to_zip() {  # for locking the diary https://www.tecmint.com/create-password-protected-zip-file-in-linux/
-    zip -p $PASSWORD $FILE_PATH.zip $FILE_PATH.diary
+# for locking the diary https://www.tecmint.com/create-password-protected-zip-file-in-linux/
+function file_to_zip() {
+    zip -p "$PASSWORD" "$FILE_PATH.zip" "$FILE_PATH.diary"
 }
 
-function zip_to_file() {  # for unlocking the diary https://www.shellhacks.com/create-password-protected-zip-file-linux/
-    unzip -p $PASSWORD $ZIP_PATH
+# for unlocking the diary https://www.shellhacks.com/create-password-protected-zip-file-linux/
+function zip_to_file() {
+    unzip -p "$PASSWORD" "$ZIP_PATH"
 }
-
 
 while true
 do
     menu
 
-    if (( $CHOICE == 1 )) # Enter diary for current date
+    # Enter diary for current date
+    if (( CHOICE == 1 )) 
     # what if user tries to crate a diary for twice at the same day?
     then
         # takes password and input into variables here
         inputbox
         passwordbox
 
-        FILE_PATH=$HOME/diary/texts/$(date +%d)-$(date +%m)-$(date +%Y)-$USER
+        FILE_PATH="$HOME/diary/texts/$(date +%d)-$(date +%m)-$(date +%Y)-$USER"
 
-        echo $DIARY_INPUT >> $FILE_PATH.diary # here needs to be encrypted
+        echo "$DIARY_INPUT" >> "$FILE_PATH".diary
         
         # converts file into zip with password
         file_to_zip
 
         # deletes the unprotected diary file
-        rm $FILE_PATH.diary
+        rm "$FILE_PATH".diary
 
-    elif (( $CHOICE == 2 )) # view an old diary
+    # view an old diary
+    elif (( CHOICE == 2 ))
     then
         # pick date and password
         calendar
         passwordbox
 
         # unlock zip with the password taken and extract
-        ZIP_PATH=$HOME/diary/texts/$DATE-$USER.zip
+        ZIP_PATH="$HOME/diary/texts/$DATE-$USER.zip"
         zip_to_file
 
         # save the content into a variable
-        FILE_PATH=$HOME/diary/texts/$DATE-$USER.diary
-        TEXT=$(cat $FILE_PATH)
-        
+        FILE_PATH="$HOME/diary/texts/$DATE-$USER.diary"
+        TEXT=$(cat "$FILE_PATH")
+
         # print content to screen
         infobox
 
         # remove unsecured file
-        rm $FILE_PATH
+        rm "$FILE_PATH"
 
-    elif (( $CHOICE == 3 )) # exit
+    # exit
+    elif (( CHOICE == 3 ))
     then
-        exit() # exit the script
+        # exit the script
+        exit
 
     else
         TEXT="Please enter a valid option."
