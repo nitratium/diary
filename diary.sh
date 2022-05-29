@@ -17,12 +17,12 @@ function passwordbox() {   # --passwordbox <text> <height> <width> [<init>]
     clear
 }
 
-# returns the date as dd/mm/yyyy, which will collide with the path. we need to handle this
 function calendar() {
-    DATE=$(dialog --calendar "Calendar" 5 50 "$(date +%d) $(date +%m) $(date +%Y)"\
+    UNFORMATTED_DATE=$(dialog --calendar "Calendar" 5 50 "$(date +%d) $(date +%m) $(date +%Y)"\
         3>&1 1>&2 2>&3 3>&- \
     )
     clear
+    DATE=$(echo "$UNFORMATTED_DATE" | sed s/"\/"/"-"/g)
 }
 
 # --infobox <text> <height> <width>
@@ -66,13 +66,13 @@ do
 
         FILE_PATH="$HOME/diary/texts/$(date +%d)-$(date +%m)-$(date +%Y)-$USER"
 
-        echo "$DIARY_INPUT" >> "$FILE_PATH".diary
+        echo "$DIARY_INPUT" >> "$FILE_PATH.diary"
         
         # converts file into zip with password
         file_to_zip
 
         # deletes the unprotected diary file
-        rm "$FILE_PATH".diary
+        rm "$FILE_PATH.diary"
 
     # view an old diary
     elif (( CHOICE == 2 ))
