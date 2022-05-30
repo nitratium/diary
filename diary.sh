@@ -44,12 +44,12 @@ function inputbox() {
 
 # for locking the diary https://www.tecmint.com/create-password-protected-zip-file-in-linux/
 function file_to_zip() {
-    zip -p "$PASSWORD" "$FILE_PATH.zip" "$FILE_PATH.diary"
+    zip -P "$PASSWORD" "$FILE_PATH.zip" "$FILE_PATH.diary"
 }
 
 # for unlocking the diary https://www.shellhacks.com/create-password-protected-zip-file-linux/
 function zip_to_file() {
-    unzip -p "$PASSWORD" "$ZIP_PATH"
+    unzip -P "$PASSWORD" "$ZIP_PATH"
 }
 
 while true
