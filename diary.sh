@@ -64,7 +64,7 @@ do
         inputbox
         passwordbox
 
-        FILE_PATH="$HOME/diary/texts/$(date +%d)-$(date +%m)-$(date +%Y)-$USER"
+        FILE_PATH="$HOME/diary/$(date +%d)-$(date +%m)-$(date +%Y)-$USER"
 
         echo "$DIARY_INPUT" >> "$FILE_PATH.diary"
         
@@ -82,11 +82,11 @@ do
         passwordbox
 
         # unlock zip with the password taken and extract
-        ZIP_PATH="$HOME/diary/texts/$DATE-$USER.zip"
+        ZIP_PATH="$HOME/diary/$DATE-$USER.zip"
         zip_to_file
 
         # save the content into a variable
-        FILE_PATH="$HOME/diary/texts/$DATE-$USER.diary"
+        FILE_PATH="$HOME/diary/$DATE-$USER.diary"
         TEXT=$(cat "$FILE_PATH")
 
         # print content to screen
