@@ -36,7 +36,7 @@ function infobox() {
 function inputbox() {
     DIARY_INPUT=$(\
         dialog \
-        --inputbox "Diary for $DATE_INPUT" 30 50 "$DIARY_INPUT" \
+        --inputbox "Diary for $DATE" 30 50 "$DIARY_INPUT" \
         3>&1 1>&2 2>&3 3>&- \
     )
     clear
@@ -44,7 +44,7 @@ function inputbox() {
 
 # for locking the diary https://www.tecmint.com/create-password-protected-zip-file-in-linux/
 function file_to_zip() {
-    zip -P "$PASSWORD" "$FILE_NAME.zip" "$(date +%d)-$(date +%m)-$(date +%Y)-$USER.diary"
+    zip -P "$PASSWORD" "$FILE_NAME.zip" "$FILE_NAME.diary"
 }
 
 # for unlocking the diary https://www.shellhacks.com/create-password-protected-zip-file-linux/
@@ -53,7 +53,10 @@ function zip_to_file() {
 }
 
 mkdir $HOME/diary/
+# saving the current working directory and changing the current directory to script's directory
+# because when I try to give a path into zip command, it zips the whole path, not only the file
 cdw=$(pdw)
+# we will be using this cdw variable just before the exit option
 cd $HOME/diary/
 
 while true
@@ -62,16 +65,23 @@ do
 
     # Enter diary for current date
     if (( CHOICE == 1 )) 
-    # what if user tries to crate a diary for twice at the same day?
     then
+        FILE_NAME="$(date +%d)-$(date +%m)-$(date +%Y)-$USER"
+
+        # what if user tries to crate a diary for twice at the same day? we may let him/her edit it
+        if [ -e "$FILE_NAME.diary" ];
+        then
+            TEXT="You already have written diary for $DATE."
+            infobox
+            continue
+        fi
+
         # takes password and input into variables here
         inputbox
         passwordbox
 
-        FILE_NAME="$(date +%d)-$(date +%m)-$(date +%Y)-$USER"
-
         echo "$DIARY_INPUT" >> "$FILE_NAME.diary"
-        
+
         # converts file into zip with password
         file_to_zip
 
