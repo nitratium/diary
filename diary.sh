@@ -52,6 +52,8 @@ function zip_to_file() {
     unzip -P "$PASSWORD" "$ZIP_PATH"
 }
 
+mkdir $HOME/diary/
+
 while true
 do
     menu
