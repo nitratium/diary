@@ -44,7 +44,7 @@ function inputbox() {
 
 # for locking the diary https://www.tecmint.com/create-password-protected-zip-file-in-linux/
 function file_to_zip() {
-    zip -P "$PASSWORD" "$FILE_PATH.zip" "$FILE_PATH.diary"
+    zip -P "$PASSWORD" "$FILE_NAME.zip" "$(date +%d)-$(date +%m)-$(date +%Y)-$USER.diary"
 }
 
 # for unlocking the diary https://www.shellhacks.com/create-password-protected-zip-file-linux/
@@ -53,6 +53,8 @@ function zip_to_file() {
 }
 
 mkdir $HOME/diary/
+cdw=$(pdw)
+cd $HOME/diary/
 
 while true
 do
@@ -66,15 +68,15 @@ do
         inputbox
         passwordbox
 
-        FILE_PATH="$HOME/diary/$(date +%d)-$(date +%m)-$(date +%Y)-$USER"
+        FILE_NAME="$(date +%d)-$(date +%m)-$(date +%Y)-$USER"
 
-        echo "$DIARY_INPUT" >> "$FILE_PATH.diary"
+        echo "$DIARY_INPUT" >> "$FILE_NAME.diary"
         
         # converts file into zip with password
         file_to_zip
 
         # deletes the unprotected diary file
-        rm "$FILE_PATH.diary"
+        rm "$FILE_NAME.diary"
 
     # view an old diary
     elif (( CHOICE == 2 ))
@@ -101,6 +103,7 @@ do
     elif (( CHOICE == 3 ))
     then
         # exit the script
+        cd $cdw
         exit
 
     else
