@@ -52,12 +52,12 @@ function zip_to_file() {
     unzip -P "$PASSWORD" "$ZIP_PATH"
 }
 
-mkdir $HOME/diary/
+mkdir "$HOME/diary/"
 # saving the current working directory and changing the current directory to script's directory
 # because when I try to give a path into zip command, it zips the whole path, not only the file
 cdw=$(pdw)
 # we will be using this cdw variable just before the exit option
-cd $HOME/diary/
+cd "$HOME/diary/"
 
 while true
 do
@@ -69,7 +69,7 @@ do
         FILE_NAME="$(date +%d)-$(date +%m)-$(date +%Y)-$USER"
 
         # what if user tries to crate a diary for twice at the same day? we may let him/her edit it
-        if [ -e "$FILE_NAME.diary" ];
+        if [ -e "$FILE_NAME.zip" ];
         then
             TEXT="You already have written diary for $DATE."
             infobox
@@ -113,7 +113,7 @@ do
     elif (( CHOICE == 3 ))
     then
         # exit the script
-        cd $cdw
+        cd "$cdw"
         exit
 
     else
