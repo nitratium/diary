@@ -41,7 +41,7 @@ function calendar() { # a calendar box for taking date inputs
     read -ra IN_DATE_ARR <<< "$UNFORMATTED_DATE"
     read -ra CUR_DATE_ARR <<< "$CURRENT_DATE"
 
-    # Since Bash doesn't have boolean, using 1 and 0 for future condition
+    # using 1 and 0 for future condition
     # 1 = True
     # 0 = False
     FUTURE=0
