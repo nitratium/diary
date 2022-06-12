@@ -63,7 +63,8 @@ function calendar() { # a calendar box for taking date inputs
         fi
     fi
 
-    # the line below converts the form of date from dd/mm/yyyy to dd-mm-yyyy
+    # the line below converts the form of date,
+    # from dd/mm/yyyy to dd-mm-yyyy,
     # to avoid collision with file path form
     DATE=$(echo "$UNFORMATTED_DATE" | sed s/"\/"/"-"/g)
 }
@@ -89,11 +90,11 @@ function file_to_zip() {
 
 # unzips and unlocks the diary with given password
 function zip_to_file() {
-    unzip -P "$PASSWORD" "$ZIP_PATH" 2> error.txt
+    unzip -P "$PASSWORD" "$ZIP_PATH" 2> error.txt # here redirecting the stderr into a file called error.txt, in case user enters a wrong password
 
-    WRONG=$(grep -c "incorrect password$" error.txt)
+    WRONG=$(grep -c "incorrect password$" error.txt) # making sure that the error output is for incorrect password
 
-    rm error.txt
+    rm error.txt # removing the error file after it's done
 }
 
 mkdir "$HOME/diary/"
@@ -103,10 +104,11 @@ cdw=$(pdw)
 # we will be using this cdw variable just before the exit option
 cd "$HOME/diary/"
 
+# infinite loop until user selects exit
 while true
 do
-    DATE="$(date +%d)-$(date +%m)-$(date +%Y)"
-    OLD_INPUT=""
+    DATE="$(date +%d)-$(date +%m)-$(date +%Y)" # current date
+    OLD_INPUT="" # setting old input variable to empty for reseting the variable on every loop
     menu
     
     # Enter diary for current date
@@ -119,14 +121,14 @@ do
             TEXT="You already have written diary for $DATE. Do you want to edit it?"
             sub_menu
 
-            if (( yesno == 1 )); then
+            if (( yesno == 1 )); then # if user selects no, return to main menu
                 continue
-            else
+            else # if user selects yes, continue
                 passwordbox
                 ZIP_PATH="$HOME/diary/$DATE-$USER.zip"
                 zip_to_file
 
-                if (( WRONG == 1 )); then
+                if (( WRONG == 1 )); then # if password is wrong, display "Wrong password!" and return to main menu
                     TEXT="Wrong password!"
                     messagebox
                     continue
@@ -182,14 +184,14 @@ do
             TEXT="You already have written diary for $DATE. Do you want to edit it?"
             sub_menu
 
-            if (( yesno == 1 )); then
+            if (( yesno == 1 )); then # if user selects no, return to main menu
                 continue
             else
                 passwordbox
                 ZIP_PATH="$HOME/diary/$DATE-$USER.zip"
                 zip_to_file
 
-                if (( WRONG == 1 )); then
+                if (( WRONG == 1 )); then # if password is wrong, display "Wrong password!" and return to main menu
                     TEXT="Wrong password!"
                     messagebox
                     continue
@@ -248,7 +250,7 @@ do
             # unlock zip with the password taken and extract
             zip_to_file
 
-            if (( WRONG == 1 )); then
+            if (( WRONG == 1 )); then # if password is wrong, display "Wrong password!" and return to main menu
                 TEXT="Wrong password!"
                 messagebox
                 continue
@@ -264,15 +266,14 @@ do
             # remove unsecured file
             rm "$FILE_PATH"
 
-        else
+        else # if a diary input doesn't exist
             TEXT="Diary for given date doesn't exist."
             messagebox
         fi
 
     # exit
     elif (( CHOICE == 4 )); then
-        # exit the script
-        cd "$cdw"
-        exit
+        cd "$cdw" 
+        exit # exit the script
     fi
 done
