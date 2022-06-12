@@ -41,21 +41,24 @@ function calendar() { # a calendar box for taking date inputs
     read -ra IN_DATE_ARR <<< "$UNFORMATTED_DATE"
     read -ra CUR_DATE_ARR <<< "$CURRENT_DATE"
 
-    FUTURE=false
+    # Since Bash doesn't have boolean, using 1 and 0 for future condition
+    # 1 = True
+    # 0 = False
+    FUTURE=0
 
     # the code block belove checks if the given date is future from today
     if (( ${IN_DATE_ARR[2]} > ${CUR_DATE_ARR[2]} )); then
-        FUTURE=true
+        FUTURE=1
 
     elif (( ${IN_DATE_ARR[2]} == ${CUR_DATE_ARR[2]} )); then
 
         if (( ${IN_DATE_ARR[1]} > ${CUR_DATE_ARR[1]} )); then
-            FUTURE=true
+            FUTURE=1
 
         elif (( ${IN_DATE_ARR[1]} == ${CUR_DATE_ARR[1]} )); then
 
             if (( ${IN_DATE_ARR[0]} > ${CUR_DATE_ARR[0]} )); then
-                FUTURE=true
+                FUTURE=1
             fi
         fi
     fi
@@ -155,7 +158,8 @@ do
         calendar
         FILE_NAME="$DATE-$USER"
 
-        if (( $FUTURE == true )); then
+        # the code block below informs the user that he/she has selected a future date
+        if (( FUTURE == 1 )); then
             TEXT="You have selected a future date. Are you sure that you want to proceed?"
             sub_menu
             if (( yesno == 1 )); then
@@ -211,7 +215,7 @@ do
         calendar
 
         # the code block below informs the user that he/she has selected a future date
-        if (( $FUTURE == true )); then
+        if (( FUTURE == 1 )); then
             TEXT="You have selected a future date. Are you sure that you want to proceed?"
             sub_menu
             if (( yesno == 1 )); then
