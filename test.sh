@@ -91,13 +91,9 @@ function file_to_zip() {
 function zip_to_file() {
     unzip -P "$PASSWORD" "$ZIP_PATH" 2> error.txt
 
-    ERROR_MESSAGE=$(cat error.txt)
-    rm error.txt
+    WRONG=$(grep -c "incorrect password$" error.txt)
 
-    WRONG_PASSWORD=0
-    if (( ERROR_MESSAGE == "skipping: test.txt                incorrect password" )); then
-        WRONG_PASSWORD=1
-    fi
+    rm error.txt
 }
 
 mkdir "$HOME/diary/"
@@ -130,7 +126,7 @@ do
                 ZIP_PATH="$HOME/diary/$DATE-$USER.zip"
                 zip_to_file
 
-                if (( WRONG_PASSWORD == 1 )); then
+                if (( WRONG == 1 )); then
                     TEXT="Wrong password!"
                     continue
                 fi
@@ -192,7 +188,7 @@ do
                 ZIP_PATH="$HOME/diary/$DATE-$USER.zip"
                 zip_to_file
 
-                if (( WRONG_PASSWORD == 1 )); then
+                if (( WRONG == 1 )); then
                     TEXT="Wrong password!"
                     continue
                 fi
@@ -250,7 +246,7 @@ do
             # unlock zip with the password taken and extract
             zip_to_file
 
-            if (( WRONG_PASSWORD == 1 )); then
+            if (( WRONG == 1 )); then
                 TEXT="Wrong password!"
                 continue
             fi
