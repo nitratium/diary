@@ -44,7 +44,7 @@ function infobox() {
 function inputbox() {
     DIARY_INPUT=$(\
         dialog \
-        --inputbox "Diary for $DATE" 30 50 ["$OLD_INPUT"] \
+        --inputbox "Diary for $DATE" 30 50 "$OLD_INPUT" \
         3>&1 1>&2 2>&3 3>&- \
     )
     clear
