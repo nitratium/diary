@@ -108,7 +108,7 @@ do
                 continue
             fi
         fi
-    
+
     # takes password and input into variables here
     inputbox
     passwordbox
@@ -123,7 +123,23 @@ do
 
     # view an old diary
     elif (( CHOICE == 2 )); then
-        continue
+        # pick date and password
+        calendar
+        passwordbox
+
+        # unlock zip with the password taken and extract
+        ZIP_PATH="$HOME/diary/$DATE-$USER.zip"
+        zip_to_file
+
+        # save the content into a variable
+        FILE_PATH="$HOME/diary/$DATE-$USER.diary"
+        TEXT=$(cat "$FILE_PATH")
+
+        # print content to screen
+        infobox
+
+        # remove unsecured file
+        rm "$FILE_PATH"
 
     # exit
     elif (( CHOICE == 3 )); then
