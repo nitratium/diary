@@ -102,8 +102,9 @@ cd "$HOME/diary/"
 while true
 do
     DATE="$(date +%d)-$(date +%m)-$(date +%Y)"
+    OLD_INPUT=""
     menu
-
+    
     # Enter diary for current date
     if (( CHOICE == 1 )); then
 
