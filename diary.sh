@@ -137,6 +137,7 @@ do
             fi
         fi
 
+        # IF DIARY DOESN'T EXIST:
         # takes password and input into variables here
         inputbox
         passwordbox
