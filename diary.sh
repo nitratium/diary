@@ -4,9 +4,7 @@
 
 function menu() { # main menu
     CHOICE=$(dialog --menu "Welcome $USER" 12 45 25 1 "Enter dairy for today, $DATE." 2 "Enter a diary for another date." 3 "View an old diary." 4 "Exit."\
-        3>&1 1>&2 2>&3 3>&- \ # with this line, we are redirecting the output from stderr to stdout. https://stackoverflow.com/questions/29222633/bash-dialog-input-in-a-variable
-        
-    )
+        3>&1 1>&2 2>&3 3>&- ) # with this line, we are redirecting the output from stderr to stdout. https://stackoverflow.com/questions/29222633/bash-dialog-input-in-a-variable
     clear # clears the current box after it's done
 }
 
@@ -26,6 +24,7 @@ function passwordbox() {  # a password box for taking password inputs
     clear # clears the current box after it's done
 }
 
+# --calendar <text> <height> <width> <day> <month> <year>
 function calendar() { # a calendar box for taking date inputs
     UNFORMATTED_DATE=$(dialog --calendar "Calendar" 5 50 "$(date +%d)" "$(date +%m)" "$(date +%Y)"\
         3>&1 1>&2 2>&3 3>&- \
@@ -162,7 +161,7 @@ do
                 continue
             fi
         fi
-        
+
         if [ -e "$FILE_NAME.zip" ]; then # if a diary input exists then:
             TEXT="You already have written diary for $DATE. Do you want to edit it?"
             sub_menu
@@ -209,9 +208,19 @@ do
     elif (( CHOICE == 3 )); then
         # pick date and password
         calendar
+
+        # the code block below informs the user that he/she has selected a future date
+        if (( $FUTURE == true )); then
+            TEXT="You have selected a future date. Are you sure that you want to proceed?"
+            sub_menu
+            if (( yesno == 1 )); then
+                continue
+            fi
+        fi
+
         ZIP_PATH="$HOME/diary/$DATE-$USER.zip"
 
-        if [ -e "$ZIP_PATH" ]; then
+        if [ -e "$ZIP_PATH" ]; then # if a diary input exists then:
             passwordbox
 
             # unlock zip with the password taken and extract
