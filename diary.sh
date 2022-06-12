@@ -89,7 +89,11 @@ function file_to_zip() {
 
 # unzips and unlocks the diary with given password
 function zip_to_file() {
-    unzip -P "$PASSWORD" "$ZIP_PATH"
+    unzip -P "$PASSWORD" "$ZIP_PATH" 2> error.txt
+
+    WRONG=$(grep -c "incorrect password$" error.txt)
+
+    rm error.txt
 }
 
 mkdir "$HOME/diary/"
@@ -121,6 +125,12 @@ do
                 passwordbox
                 ZIP_PATH="$HOME/diary/$DATE-$USER.zip"
                 zip_to_file
+
+                if (( WRONG == 1 )); then
+                    TEXT="Wrong password!"
+                    messagebox
+                    continue
+                fi
 
                 # for editing the old diary
                 FILE_PATH="$HOME/diary/$DATE-$USER.diary"
@@ -179,6 +189,12 @@ do
                 ZIP_PATH="$HOME/diary/$DATE-$USER.zip"
                 zip_to_file
 
+                if (( WRONG == 1 )); then
+                    TEXT="Wrong password!"
+                    messagebox
+                    continue
+                fi
+
                 # for editing the old diary
                 FILE_PATH="$HOME/diary/$DATE-$USER.diary"
                 OLD_INPUT=$(cat "$FILE_PATH")
@@ -231,6 +247,12 @@ do
 
             # unlock zip with the password taken and extract
             zip_to_file
+
+            if (( WRONG == 1 )); then
+                TEXT="Wrong password!"
+                messagebox
+                continue
+            fi
 
             # save the content into a variable
             FILE_PATH="$HOME/diary/$DATE-$USER.diary"
