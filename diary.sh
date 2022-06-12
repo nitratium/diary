@@ -190,7 +190,8 @@ do
 
         else
             TEXT="Diary for given date doesn't exist."
-            msgbox
+            messagebox
+        fi
 
     # exit
     elif (( CHOICE == 4 )); then
