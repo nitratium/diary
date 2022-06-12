@@ -3,7 +3,7 @@
 # THIS SCRIPT IS BEING DEVELOPED BY OZAN YUCEL & MERT YILDIZ | github.com/ozanyucell & github.com/myildiz21
 
 function menu() {
-    CHOICE=$(dialog --menu "Welcome $USER" 12 45 25 1 "Enter dairy for $(date +%D)." 2 "View an old diary." 3 "Exit."\
+    CHOICE=$(dialog --menu "Welcome $USER" 12 45 25 1 "Enter dairy for today, $(date +%D)." 2 "Enter a diary for another date." 3 "View an old diary." 4 "Exit."\
         3>&1 1>&2 2>&3 3>&- \
         # if you are curious about what is happening on the line above, check here: https://stackoverflow.com/questions/29222633/bash-dialog-input-in-a-variable
     )
@@ -68,14 +68,13 @@ cd "$HOME/diary/"
 
 while true
 do
+    DATE="$(date +%d)-$(date +%m)-$(date +%Y)"
     menu
 
     # Enter diary for current date
-    if (( CHOICE == 1 )) 
-    then
+    if (( CHOICE == 1 )); then
 
         FILE_NAME="$(date +%d)-$(date +%m)-$(date +%Y)-$USER"
-        DATE="$(date +%d)-$(date +%m)-$(date +%Y)"
 
         # what if user tries to crate a diary for twice at the same day? we may let him/her edit it
         if [ -e "$FILE_NAME.zip" ]; then
@@ -102,6 +101,54 @@ do
 
                 # remove the unsecured file
                 rm "$FILE_PATH"
+
+                # for going back to menu
+                continue
+            fi
+        fi
+
+        # takes password and input into variables here
+        inputbox
+        passwordbox
+
+        echo "$DIARY_INPUT" > "$FILE_NAME.diary"
+
+        # converts file into zip with password
+        file_to_zip
+
+        # deletes the unprotected diary file
+        rm "$FILE_NAME.diary"
+
+    # enter a diary for another date
+    elif (( CHOICE == 2 )); then
+        calendar
+        FILE_NAME="$DATE-$USER"
+
+        if [ -e "$FILE_NAME.zip" ]; then
+            TEXT="You already have written diary for $DATE. Do you want to edit?"
+            sub_menu
+
+            if (( yesno == 1 )); then
+                continue
+            else
+                passwordbox
+                ZIP_PATH="$HOME/diary/$DATE-$USER.zip"
+                zip_to_file
+
+                # for editing the old diary
+                FILE_PATH="$HOME/diary/$DATE-$USER.diary"
+                OLD_INPUT=$(cat "$FILE_PATH")
+                inputbox
+                passwordbox
+
+                echo "$DIARY_INPUT" > "$FILE_NAME.diary"
+
+                # converts file into zip with password
+                file_to_zip
+
+                # remove the unsecured file
+                rm "$FILE_PATH"
+
                 # for going back to menu
                 continue
             fi
@@ -120,7 +167,7 @@ do
         rm "$FILE_NAME.diary"
 
     # view an old diary
-    elif (( CHOICE == 2 )); then
+    elif (( CHOICE == 3 )); then
         # pick date and password
         calendar
         passwordbox
@@ -140,7 +187,7 @@ do
         rm "$FILE_PATH"
 
     # exit
-    elif (( CHOICE == 3 )); then
+    elif (( CHOICE == 4 )); then
         # exit the script
         cd "$cdw"
         exit
