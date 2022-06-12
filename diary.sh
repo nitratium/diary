@@ -78,7 +78,7 @@ do
 
         # what if user tries to crate a diary for twice at the same day? we may let him/her edit it
         if [ -e "$FILE_NAME.zip" ]; then
-            TEXT="You already have written diary for $DATE. Do you want to edit?"
+            TEXT="You already have written diary for $DATE. Do you want to edit it?"
             sub_menu
 
             if (( yesno == 1 )); then
@@ -125,7 +125,7 @@ do
         FILE_NAME="$DATE-$USER"
 
         if [ -e "$FILE_NAME.zip" ]; then
-            TEXT="You already have written diary for $DATE. Do you want to edit?"
+            TEXT="You already have written diary for $DATE. Do you want to edit it?"
             sub_menu
 
             if (( yesno == 1 )); then
