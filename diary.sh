@@ -170,21 +170,27 @@ do
     elif (( CHOICE == 3 )); then
         # pick date and password
         calendar
-        passwordbox
-
-        # unlock zip with the password taken and extract
         ZIP_PATH="$HOME/diary/$DATE-$USER.zip"
-        zip_to_file
 
-        # save the content into a variable
-        FILE_PATH="$HOME/diary/$DATE-$USER.diary"
-        TEXT=$(cat "$FILE_PATH")
+        if [ -e "$ZIP_PATH" ]; then
+            passwordbox
 
-        # print content to screen
-        messagebox
+            # unlock zip with the password taken and extract
+            zip_to_file
 
-        # remove unsecured file
-        rm "$FILE_PATH"
+            # save the content into a variable
+            FILE_PATH="$HOME/diary/$DATE-$USER.diary"
+            TEXT=$(cat "$FILE_PATH")
+
+            # print content to screen
+            messagebox
+
+            # remove unsecured file
+            rm "$FILE_PATH"
+
+        else
+            TEXT="Diary for given date doesn't exist."
+            msgbox
 
     # exit
     elif (( CHOICE == 4 )); then
