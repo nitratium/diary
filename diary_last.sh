@@ -25,6 +25,31 @@ function passwordbox() {   # --passwordbox <text> <height> <width> [<init>]
     clear
 }
 
+function calendar() {
+    UNFORMATTED_DATE=$(dialog --calendar "Calendar" 5 50 "$(date +%d) $(date +%m) $(date +%Y)"\
+        3>&1 1>&2 2>&3 3>&- \
+    )
+    clear
+    DATE=$(echo "$UNFORMATTED_DATE" | sed s/"\/"/"-"/g)
+}
+
+# --infobox <text> <height> <width>
+function infobox() {
+    dialog  --infobox "$TEXT" 15 30
+    clear
+    # not sure if we need to use clear here. probably yes
+}
+
+# --inputbox <text> <height> <width> [<init>]
+function inputbox() {
+    DIARY_INPUT=$(\
+        dialog \
+        --inputbox "Diary for $DATE" 30 50 ["$OLD_INPUT"] \
+        3>&1 1>&2 2>&3 3>&- \
+    )
+    clear
+}
+
 # for locking the diary https://www.tecmint.com/create-password-protected-zip-file-in-linux/
 function file_to_zip() {
     zip -P "$PASSWORD" "$FILE_NAME.zip" "$FILE_NAME.diary"
