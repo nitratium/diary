@@ -78,8 +78,7 @@ do
         DATE="$(date +%d)-$(date +%m)-$(date +%Y)"
 
         # what if user tries to crate a diary for twice at the same day? we may let him/her edit it
-        if [ -e "$FILE_NAME.zip" ];
-        then
+        if [ -e "$FILE_NAME.zip" ]; then
             TEXT="You already have written diary for $DATE. Do you want to edit?"
             sub_menu
 
@@ -108,17 +107,17 @@ do
             fi
         fi
 
-    # takes password and input into variables here
-    inputbox
-    passwordbox
+        # takes password and input into variables here
+        inputbox
+        passwordbox
 
-    echo "$DIARY_INPUT" > "$FILE_NAME.diary"
+        echo "$DIARY_INPUT" > "$FILE_NAME.diary"
 
-    # converts file into zip with password
-    file_to_zip
+        # converts file into zip with password
+        file_to_zip
 
-    # deletes the unprotected diary file
-    rm "$FILE_NAME.diary"
+        # deletes the unprotected diary file
+        rm "$FILE_NAME.diary"
 
     # view an old diary
     elif (( CHOICE == 2 )); then

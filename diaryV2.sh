@@ -72,8 +72,7 @@ do
     menu
 
     # Enter diary for current date
-    if (( CHOICE == 1 )) 
-    then
+    if (( CHOICE == 1 )); then
 
         FILE_NAME="$(date +%d)-$(date +%m)-$(date +%Y)-$USER"
 
@@ -108,17 +107,17 @@ do
             fi
         fi
 
-    # takes password and input into variables here
-    inputbox
-    passwordbox
+        # takes password and input into variables here
+        inputbox
+        passwordbox
 
-    echo "$DIARY_INPUT" > "$FILE_NAME.diary"
+        echo "$DIARY_INPUT" > "$FILE_NAME.diary"
 
-    # converts file into zip with password
-    file_to_zip
+        # converts file into zip with password
+        file_to_zip
 
-    # deletes the unprotected diary file
-    rm "$FILE_NAME.diary"
+        # deletes the unprotected diary file
+        rm "$FILE_NAME.diary"
 
     # enter a diary for another date
     elif (( CHOICE == 2 )); then
