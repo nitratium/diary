@@ -3,7 +3,7 @@
 # THIS SCRIPT IS BEING DEVELOPED BY OZAN YUCEL & MERT YILDIZ | github.com/ozanyucell & github.com/myildiz21
 
 function menu() {
-    CHOICE=$(dialog --menu "Welcome $USER" 12 45 25 1 "Enter dairy for today, $(date +%D)." 2 "Enter a diary for another date." 3 "View an old diary." 4 "Exit."\
+    CHOICE=$(dialog --menu "Welcome $USER" 12 45 25 1 "Enter dairy for today, $DATE." 2 "Enter a diary for another date." 3 "View an old diary." 4 "Exit."\
         3>&1 1>&2 2>&3 3>&- \
         # if you are curious about what is happening on the line above, check here: https://stackoverflow.com/questions/29222633/bash-dialog-input-in-a-variable
     )
