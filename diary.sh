@@ -10,6 +10,14 @@ function menu() {
     clear
 }
 
+function sub_menu() { # sub menu with yesno dialog for existing diary
+    $(dialog --yesno "$TEXT" 10 30\
+        3>&1 1>&2 2>&3 3>&- \
+    )
+    yesno=$?
+    clear
+}
+
 function passwordbox() {   # --passwordbox <text> <height> <width> [<init>]
     PASSWORD=$(dialog --passwordbox "Password" 10 20\
         3>&1 1>&2 2>&3 3>&- \
@@ -18,25 +26,24 @@ function passwordbox() {   # --passwordbox <text> <height> <width> [<init>]
 }
 
 function calendar() {
-    UNFORMATTED_DATE=$(dialog --calendar "Calendar" 5 50 "$(date +%d) $(date +%m) $(date +%Y)"\
+    UNFORMATTED_DATE=$(dialog --calendar "Calendar" 5 50 "$(date +%d)" "$(date +%m)" "$(date +%Y)"\
         3>&1 1>&2 2>&3 3>&- \
     )
     clear
     DATE=$(echo "$UNFORMATTED_DATE" | sed s/"\/"/"-"/g)
 }
 
-# --infobox <text> <height> <width>
-function infobox() {
-    dialog  --infobox "$TEXT" 15 30
+# --msgbox <text> <height> <width>
+function messagebox() {
+    dialog --msgbox "$TEXT" 15 30
     clear
-    # not sure if we need to use clear here. probably yes
 }
 
 # --inputbox <text> <height> <width> [<init>]
 function inputbox() {
     DIARY_INPUT=$(\
         dialog \
-        --inputbox "Diary for $DATE" 30 50 "$DIARY_INPUT" \
+        --inputbox "Diary for $DATE" 30 50 "$OLD_INPUT" \
         3>&1 1>&2 2>&3 3>&- \
     )
     clear
@@ -66,31 +73,55 @@ do
     # Enter diary for current date
     if (( CHOICE == 1 )) 
     then
+
         FILE_NAME="$(date +%d)-$(date +%m)-$(date +%Y)-$USER"
+        DATE="$(date +%d)-$(date +%m)-$(date +%Y)"
 
         # what if user tries to crate a diary for twice at the same day? we may let him/her edit it
         if [ -e "$FILE_NAME.zip" ];
         then
-            TEXT="You already have written diary for $DATE."
-            infobox
-            continue
+            TEXT="You already have written diary for $DATE. Do you want to edit?"
+            sub_menu
+
+            if (( yesno == 1 )); then
+                continue
+            else
+                passwordbox
+                ZIP_PATH="$HOME/diary/$DATE-$USER.zip"
+                zip_to_file
+
+                # for editing the old diary
+                FILE_PATH="$HOME/diary/$DATE-$USER.diary"
+                OLD_INPUT=$(cat "$FILE_PATH")
+                inputbox
+                passwordbox
+
+                echo "$DIARY_INPUT" > "$FILE_NAME.diary"
+
+                # converts file into zip with password
+                file_to_zip
+
+                # remove the unsecured file
+                rm "$FILE_PATH"
+                # for going back to menu
+                continue
+            fi
         fi
 
-        # takes password and input into variables here
-        inputbox
-        passwordbox
+    # takes password and input into variables here
+    inputbox
+    passwordbox
 
-        echo "$DIARY_INPUT" >> "$FILE_NAME.diary"
+    echo "$DIARY_INPUT" > "$FILE_NAME.diary"
 
-        # converts file into zip with password
-        file_to_zip
+    # converts file into zip with password
+    file_to_zip
 
-        # deletes the unprotected diary file
-        rm "$FILE_NAME.diary"
+    # deletes the unprotected diary file
+    rm "$FILE_NAME.diary"
 
     # view an old diary
-    elif (( CHOICE == 2 ))
-    then
+    elif (( CHOICE == 2 )); then
         # pick date and password
         calendar
         passwordbox
@@ -104,21 +135,15 @@ do
         TEXT=$(cat "$FILE_PATH")
 
         # print content to screen
-        infobox
+        messagebox
 
         # remove unsecured file
         rm "$FILE_PATH"
 
     # exit
-    elif (( CHOICE == 3 ))
-    then
+    elif (( CHOICE == 3 )); then
         # exit the script
         cd "$cdw"
         exit
-
-    else
-        TEXT="Please enter a valid option."
-        infobox
-        continue
     fi
 done
