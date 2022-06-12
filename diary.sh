@@ -2,65 +2,96 @@
 
 # THIS SCRIPT IS BEING DEVELOPED BY OZAN YUCEL & MERT YILDIZ | github.com/ozanyucell & github.com/myildiz21
 
-function menu() {
+function menu() { # main menu
     CHOICE=$(dialog --menu "Welcome $USER" 12 45 25 1 "Enter dairy for today, $DATE." 2 "Enter a diary for another date." 3 "View an old diary." 4 "Exit."\
-        3>&1 1>&2 2>&3 3>&- \
-        # if you are curious about what is happening on the line above, check here: https://stackoverflow.com/questions/29222633/bash-dialog-input-in-a-variable
+        3>&1 1>&2 2>&3 3>&- \ # with this line, we are redirecting the output from stderr to stdout. https://stackoverflow.com/questions/29222633/bash-dialog-input-in-a-variable
+        
     )
-    clear
+    clear # clears the current box after it's done
 }
 
-function sub_menu() { # sub menu with yesno dialog for existing diary
+function sub_menu() { # sub menu with yesno dialog
     $(dialog --yesno "$TEXT" 10 30\
         3>&1 1>&2 2>&3 3>&- \
     )
-    yesno=$?
-    clear
+    yesno=$? # takes output into a variable
+    clear # clears the current box after it's done
 }
 
-function passwordbox() {   # --passwordbox <text> <height> <width> [<init>]
+# --passwordbox <text> <height> <width> [<init>]
+function passwordbox() {  # a password box for taking password inputs
     PASSWORD=$(dialog --passwordbox "Password" 10 20\
         3>&1 1>&2 2>&3 3>&- \
     )
-    clear
+    clear # clears the current box after it's done
 }
 
-function calendar() {
+function calendar() { # a calendar box for taking date inputs
     UNFORMATTED_DATE=$(dialog --calendar "Calendar" 5 50 "$(date +%d)" "$(date +%m)" "$(date +%Y)"\
         3>&1 1>&2 2>&3 3>&- \
     )
-    clear
+    clear # clears the current box after it's done
+
+    # now we need to check if the user selected a future date,
+    # if so we will pop out a warning for the user,
+    # we didn't want to block the user, 
+    # in case if they want to leave a note for future
+    CURRENT_DATE="$(date +%d)/$(date +%m)/$(date +%Y)"
+    # lines below split inputs with given delimeter
+    IFS='/' # DELIMETER
+    read -ra IN_DATE_ARR <<< "$UNFORMATTED_DATE"
+    read -ra CUR_DATE_ARR <<< "$CURRENT_DATE"
+
+    FUTURE=false
+
+    # the code block belove checks if the given date is future from today
+    if (( ${IN_DATE_ARR[2]} > ${CUR_DATE_ARR[2]} )); then
+        FUTURE=true
+
+    elif (( ${IN_DATE_ARR[2]} == ${CUR_DATE_ARR[2]} )); then
+
+        if (( ${IN_DATE_ARR[1]} > ${CUR_DATE_ARR[1]} )); then
+            FUTURE=true
+
+        elif (( ${IN_DATE_ARR[1]} == ${CUR_DATE_ARR[1]} )); then
+
+            if (( ${IN_DATE_ARR[0]} > ${CUR_DATE_ARR[0]} )); then
+                FUTURE=true
+            fi
+        fi
+    fi
+
+    # the line below converts the form of date from dd/mm/yyyy to dd-mm-yyyy
+    # to avoid collision with file path form
     DATE=$(echo "$UNFORMATTED_DATE" | sed s/"\/"/"-"/g)
 }
 
 # --msgbox <text> <height> <width>
-function messagebox() {
+function messagebox() { # a message box for displaying text
     dialog --msgbox "$TEXT" 15 30
-    clear
+    clear # clears the current box after it's done
 }
 
 # --inputbox <text> <height> <width> [<init>]
-function inputbox() {
-    DIARY_INPUT=$(\
-        dialog \
-        --inputbox "Diary for $DATE" 30 50 "$OLD_INPUT" \
+function inputbox() { # an input box for taking diary inputs
+    DIARY_INPUT=$(dialog --inputbox "Diary for $DATE" 30 50 "$OLD_INPUT" \
         3>&1 1>&2 2>&3 3>&- \
     )
-    clear
+    clear # clears the current box after it's done
 }
 
-# for locking the diary https://www.tecmint.com/create-password-protected-zip-file-in-linux/
+# zips and locks the diary with given password
 function file_to_zip() {
     zip -P "$PASSWORD" "$FILE_NAME.zip" "$FILE_NAME.diary"
 }
 
-# for unlocking the diary https://www.shellhacks.com/create-password-protected-zip-file-linux/
+# unzips and unlocks the diary with given password
 function zip_to_file() {
     unzip -P "$PASSWORD" "$ZIP_PATH"
 }
 
 mkdir "$HOME/diary/"
-# saving the current working directory and changing the current directory to script's directory
+# saving the current working directory into a varible and changing the current directory to script's directory
 # because when I try to give a path into zip command, it zips the whole path, not only the file
 cdw=$(pdw)
 # we will be using this cdw variable just before the exit option
@@ -76,8 +107,8 @@ do
 
         FILE_NAME="$(date +%d)-$(date +%m)-$(date +%Y)-$USER"
 
-        # what if user tries to crate a diary for twice at the same day? we may let him/her edit it
-        if [ -e "$FILE_NAME.zip" ]; then
+        # what if user tries to crate a diary for twice at the same day? we are letting him/her to edit it
+        if [ -e "$FILE_NAME.zip" ]; then # if a diary input exists then:
             TEXT="You already have written diary for $DATE. Do you want to edit it?"
             sub_menu
 
@@ -124,7 +155,15 @@ do
         calendar
         FILE_NAME="$DATE-$USER"
 
-        if [ -e "$FILE_NAME.zip" ]; then
+        if (( $FUTURE == true )); then
+            TEXT="You have selected a future date. Are you sure that you want to proceed?"
+            sub_menu
+            if (( yesno == 1 )); then
+                continue
+            fi
+        fi
+        
+        if [ -e "$FILE_NAME.zip" ]; then # if a diary input exists then:
             TEXT="You already have written diary for $DATE. Do you want to edit it?"
             sub_menu
 
