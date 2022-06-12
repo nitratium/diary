@@ -16,7 +16,7 @@ function sub_menu() { # sub menu with yesno dialog
     clear # clears the current box after it's done
 }
 
-# --passwordbox <text> <height> <width> [<init>]
+# --passwordbox <text> <height> <width> <init>
 function passwordbox() {  # a password box for taking password inputs
     PASSWORD=$(dialog --passwordbox "Password" 10 20\
         3>&1 1>&2 2>&3 3>&- \
