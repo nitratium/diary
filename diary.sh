@@ -4,14 +4,14 @@
 
 function menu() { # main menu
     CHOICE=$(dialog --menu "Welcome $USER" 12 45 25 1 "Enter dairy for today, $DATE." 2 "Enter a diary for another date." 3 "View an old diary." 4 "Exit."\
-        3>&1 1>&2 2>&3 3>&- ) # with this line, we are redirecting the output from stderr to stdout. https://stackoverflow.com/questions/29222633/bash-dialog-input-in-a-variable
+        3>&1 1>&2 2>&3 3>&- ) # with this line, we are redirecting the output from stderr to stdout, https://stackoverflow.com/questions/29222633/bash-dialog-input-in-a-variable
     clear # clears the current box after it's done
 }
 
 function sub_menu() { # sub menu with yesno dialog
     $(dialog --yesno "$TEXT" 10 30\
-        3>&1 1>&2 2>&3 3>&- \
-    )
+        3>&1 1>&2 2>&3 3>&- )
+
     yesno=$? # takes output into a variable
     clear # clears the current box after it's done
 }
@@ -19,16 +19,14 @@ function sub_menu() { # sub menu with yesno dialog
 # --passwordbox <text> <height> <width> <init>
 function passwordbox() {  # a password box for taking password inputs
     PASSWORD=$(dialog --passwordbox "Password" 10 20\
-        3>&1 1>&2 2>&3 3>&- \
-    )
+        3>&1 1>&2 2>&3 3>&- )
     clear # clears the current box after it's done
 }
 
 # --calendar <text> <height> <width> <day> <month> <year>
 function calendar() { # a calendar box for taking date inputs
     UNFORMATTED_DATE=$(dialog --calendar "Calendar" 5 50 "$(date +%d)" "$(date +%m)" "$(date +%Y)"\
-        3>&1 1>&2 2>&3 3>&- \
-    )
+        3>&1 1>&2 2>&3 3>&- )
     clear # clears the current box after it's done
 
     # now we need to check if the user selected a future date,
@@ -78,8 +76,7 @@ function messagebox() { # a message box for displaying text
 # --inputbox <text> <height> <width> <init>
 function inputbox() { # an input box for taking diary inputs
     DIARY_INPUT=$(dialog --inputbox "Diary for $DATE" 30 50 "$OLD_INPUT" \
-        3>&1 1>&2 2>&3 3>&- \
-    )
+        3>&1 1>&2 2>&3 3>&- )
     clear # clears the current box after it's done
 }
 
