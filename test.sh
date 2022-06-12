@@ -128,6 +128,7 @@ do
 
                 if (( WRONG == 1 )); then
                     TEXT="Wrong password!"
+                    messagebox
                     continue
                 fi
 
@@ -190,6 +191,7 @@ do
 
                 if (( WRONG == 1 )); then
                     TEXT="Wrong password!"
+                    messagebox
                     continue
                 fi
 
@@ -248,6 +250,7 @@ do
 
             if (( WRONG == 1 )); then
                 TEXT="Wrong password!"
+                messagebox
                 continue
             fi
 
