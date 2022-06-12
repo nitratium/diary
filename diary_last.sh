@@ -26,18 +26,17 @@ function passwordbox() {   # --passwordbox <text> <height> <width> [<init>]
 }
 
 function calendar() {
-    UNFORMATTED_DATE=$(dialog --calendar "Calendar" 5 50 "$(date +%d) $(date +%m) $(date +%Y)"\
+    UNFORMATTED_DATE=$(dialog --calendar "Calendar" 5 50 "$(date +%d)" "$(date +%m)" "$(date +%Y)"\
         3>&1 1>&2 2>&3 3>&- \
     )
     clear
     DATE=$(echo "$UNFORMATTED_DATE" | sed s/"\/"/"-"/g)
 }
 
-# --infobox <text> <height> <width>
-function infobox() {
-    dialog  --infobox "$TEXT" 15 30
+# --msgbox <text> <height> <width>
+function messagebox() {
+    dialog --msgbox "$TEXT" 15 30
     clear
-    # not sure if we need to use clear here. probably yes
 }
 
 # --inputbox <text> <height> <width> [<init>]
@@ -97,7 +96,7 @@ do
                 inputbox
                 passwordbox
 
-                echo "$DIARY_INPUT" >> "$FILE_NAME.diary"
+                echo "$DIARY_INPUT" > "$FILE_NAME.diary"
 
                 # converts file into zip with password
                 file_to_zip
@@ -113,7 +112,7 @@ do
     inputbox
     passwordbox
 
-    echo "$DIARY_INPUT" >> "$FILE_NAME.diary"
+    echo "$DIARY_INPUT" > "$FILE_NAME.diary"
 
     # converts file into zip with password
     file_to_zip
@@ -136,7 +135,7 @@ do
         TEXT=$(cat "$FILE_PATH")
 
         # print content to screen
-        infobox
+        messagebox
 
         # remove unsecured file
         rm "$FILE_PATH"

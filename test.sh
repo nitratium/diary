@@ -96,7 +96,7 @@ do
                 inputbox
                 passwordbox
 
-                echo "$DIARY_INPUT" >> "$FILE_NAME.diary"
+                echo "$DIARY_INPUT" > "$FILE_NAME.diary"
 
                 # converts file into zip with password
                 file_to_zip
