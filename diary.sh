@@ -75,7 +75,7 @@ function messagebox() { # a message box for displaying text
     clear # clears the current box after it's done
 }
 
-# --inputbox <text> <height> <width> [<init>]
+# --inputbox <text> <height> <width> <init>
 function inputbox() { # an input box for taking diary inputs
     DIARY_INPUT=$(dialog --inputbox "Diary for $DATE" 30 50 "$OLD_INPUT" \
         3>&1 1>&2 2>&3 3>&- \
@@ -97,12 +97,17 @@ function zip_to_file() {
     rm error.txt # removing the error file after it's done
 }
 
-mkdir "$HOME/diary/"
+### RUN STARTS HERE ###
+
+# creating a hidden directory for depositing diary inputs
+mkdir "$HOME/.diary/"
+
 # saving the current working directory into a varible and changing the current directory to script's directory
 # because when I try to give a path into zip command, it zips the whole path, not only the file
 cdw=$(pdw)
+
 # we will be using this cdw variable just before the exit option
-cd "$HOME/diary/"
+cd "$HOME/.diary/"
 
 # infinite loop until user selects exit
 while true
@@ -125,7 +130,7 @@ do
                 continue
             else # if user selects yes, continue
                 passwordbox
-                ZIP_PATH="$HOME/diary/$DATE-$USER.zip"
+                ZIP_PATH="$HOME/.diary/$DATE-$USER.zip"
                 zip_to_file
 
                 if (( WRONG == 1 )); then # if password is wrong, display "Wrong password!" and return to main menu
@@ -135,7 +140,7 @@ do
                 fi
 
                 # for editing the old diary
-                FILE_PATH="$HOME/diary/$DATE-$USER.diary"
+                FILE_PATH="$HOME/.diary/$DATE-$USER.diary"
                 OLD_INPUT=$(cat "$FILE_PATH")
                 inputbox
                 passwordbox
@@ -188,7 +193,7 @@ do
                 continue
             else
                 passwordbox
-                ZIP_PATH="$HOME/diary/$DATE-$USER.zip"
+                ZIP_PATH="$HOME/.diary/$DATE-$USER.zip"
                 zip_to_file
 
                 if (( WRONG == 1 )); then # if password is wrong, display "Wrong password!" and return to main menu
@@ -198,7 +203,7 @@ do
                 fi
 
                 # for editing the old diary
-                FILE_PATH="$HOME/diary/$DATE-$USER.diary"
+                FILE_PATH="$HOME/.diary/$DATE-$USER.diary"
                 OLD_INPUT=$(cat "$FILE_PATH")
                 inputbox
                 passwordbox
@@ -242,7 +247,7 @@ do
             fi
         fi
 
-        ZIP_PATH="$HOME/diary/$DATE-$USER.zip"
+        ZIP_PATH="$HOME/.diary/$DATE-$USER.zip"
 
         if [ -e "$ZIP_PATH" ]; then # if a diary input exists then:
             passwordbox
@@ -257,7 +262,7 @@ do
             fi
 
             # save the content into a variable
-            FILE_PATH="$HOME/diary/$DATE-$USER.diary"
+            FILE_PATH="$HOME/.diary/$DATE-$USER.diary"
             TEXT=$(cat "$FILE_PATH")
 
             # print content to screen
