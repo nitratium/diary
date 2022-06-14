@@ -1,6 +1,7 @@
 #!/bin/bash
 
 # THIS SCRIPT IS BEING DEVELOPED BY OZAN YUCEL & MERT YILDIZ | github.com/ozanyucell & github.com/myildiz21
+# Ozan Yücel - 20190602043 | Mert Yıldız 20190613031
 
 function menu() { # main menu
     CHOICE=$(dialog --menu "Welcome $USER" 12 45 25 1 "Enter dairy for today, $DATE." 2 "Enter a diary for another date." 3 "View an old diary." 4 "Exit."\
